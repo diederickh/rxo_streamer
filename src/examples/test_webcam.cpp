@@ -51,6 +51,7 @@ int main() {
   info.quality = 50;
   info.port = 8000;
   info.host = "127.0.0.1";
+  //info.host = "192.168.0.30";
   info.user = "source";
   info.password = "hackme";
   info.mount = "/example.ogg";
@@ -138,6 +139,7 @@ static int shutdown_webcam() {
   if (!cap) { return -1; }
   cap->stop();
   cap->close();
+  return 0;
 }
 
 
