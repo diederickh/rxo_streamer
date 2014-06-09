@@ -63,7 +63,7 @@ int main()
       total = total + read;
 
       if (read > 0) {
-        ret = shout_send(shout, buff, read);
+        ret = shout_send(shout, (const unsigned char*)buff, read);
         if (ret != SHOUTERR_SUCCESS) {
           printf("DEBUG: Send error: %s\n", shout_get_error(shout));
           break;

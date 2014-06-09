@@ -1,4 +1,3 @@
-
 #include <videocapture/Capture.h>
 
 extern "C" {
@@ -53,7 +52,8 @@ int main() {
   info.host = "127.0.0.1";
   info.user = "source";
   info.password = "hackme";
-  info.mount = "/example.ogg";
+  //  info.mount = "/example.ogg";
+  info.mount = "/example.webm";
 
   if (rxo_streamer_init(&streamer, &info) < 0) {
     printf("Error: cannot initialize the streamer.\n");

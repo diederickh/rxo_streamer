@@ -1,8 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
-#include <rxo_streamer/rxo_streamer.h>
-#include <rxo_streamer/rxo_generator.h>
+#include <unistd.h>
+
+extern "C" {
+#  include <rxo_streamer/rxo_streamer.h>
+#  include <rxo_streamer/rxo_generator.h>
+}
 
 #define WIDTH 640
 #define HEIGHT 480

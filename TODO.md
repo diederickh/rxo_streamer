@@ -23,3 +23,8 @@
         th->info.keyframe_granule_shift = 4;
         
   -  Add rxo_theora_clear() to cleanup any used memory.
+
+
+  rxo_webm
+  --------      
+  -  Directly use mkvmuxer or libebm instead of webmtools, see https://github.com/garrynewman/holly/tree/master/holly/modules/webm
