@@ -35,35 +35,37 @@ set(rxo_streamer_sources
 
 if(APPLE)
 
-#   find_library(fr_corefoundation CoreFoundation)
-#   find_library(fr_avfoundation AVFoundation)
-#   find_library(fr_coremedia CoreMedia)
-#   find_library(fr_cocoa Cocoa)
-#   find_library(fr_opengl OpenGL)
-#   find_library(fr_iokit IOKit)
-#   find_library(fr_corevideo CoreVideo)
-#   find_library(fr_opencl OpenCL)
-#   find_library(fr_audio AudioUnit)
-#   find_library(fr_caudio CoreAudio)
-#   find_library(fr_audio_toolbox AudioToolbox)
-# 
-#   set(app_libs
-#     ${extern_lib_dir}/libvpx.a
-#     ${extern_lib_dir}/libuv.a
-#     ${extern_lib_dir}/libpng.a
-#     ${extern_lib_dir}/libz.a
-#     ${extern_lib_dir}/libglfw3.a
-#     ${extern_lib_dir}/libvideocapture.a
-#     ${extern_lib_dir}/libyuv.a
-#     ${fr_corefoundation}  # uv
-#     ${fr_cocoa}           # uv
-#     ${fr_iokit}           # uv
-#     ${fr_opengl}          # glfw
-#     ${fr_corevideo}       # glfw
-#     ${fr_avfoundation}    # videocapture
-#     ${fr_coremedia}       # videocapture
-# 
-#     )
+   find_library(fr_corefoundation CoreFoundation)
+   find_library(fr_avfoundation AVFoundation)
+   find_library(fr_coremedia CoreMedia)
+   find_library(fr_cocoa Cocoa)
+   find_library(fr_opengl OpenGL)
+   find_library(fr_iokit IOKit)
+   find_library(fr_corevideo CoreVideo)
+   find_library(fr_opencl OpenCL)
+   find_library(fr_audio AudioUnit)
+   find_library(fr_caudio CoreAudio)
+   find_library(fr_audio_toolbox AudioToolbox)
+ 
+   set(app_libs
+     ${extern_lib_dir}/libz.a
+     ${extern_lib_dir}/libvideocapture.a
+     ${extern_lib_dir}/libyuv.a
+     ${extern_lib_dir}/libshout.a
+     ${extern_lib_dir}/libvorbis.a
+     ${extern_lib_dir}/libtheora.a
+     ${extern_lib_dir}/libtheoraenc.a
+     ${extern_lib_dir}/libogg.a
+     ${extern_lib_dir}/libspeex.a
+     ${fr_corefoundation}  # uv
+     ${fr_cocoa}           # uv
+     ${fr_iokit}           # uv
+     ${fr_opengl}          # glfw
+     ${fr_corevideo}       # glfw
+     ${fr_avfoundation}    # videocapture
+     ${fr_coremedia}       # videocapture
+ 
+     )
 
 elseif(UNIX)
 
@@ -76,7 +78,7 @@ elseif(UNIX)
   set(app_libs
     ${extern_lib_dir}/libuv.a
     ${extern_lib_dir}/libyuv.a  # for webcam conversion
-    ${extern_lib_dir}/libpng.a
+#    ${extern_lib_dir}/libpng.a
     ${extern_lib_dir}/libshout.a
     ${extern_lib_dir}/libvorbis.a
     ${extern_lib_dir}/libtheora.a

@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <rxo_streamer/rxo_theora.h>
 
 int rxo_theora_init(rxo_theora* th, rxo_info* info) {
