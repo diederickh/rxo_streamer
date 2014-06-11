@@ -10,8 +10,8 @@ extern "C" {
 
 #define DEVICE 0
 #define WIDTH 160
-#define HEIGHT 90
-#define FPS 30
+#define HEIGHT 120
+#define FPS 15
 
 using namespace ca; 
 

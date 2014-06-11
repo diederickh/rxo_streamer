@@ -16,7 +16,7 @@ int rxo_vpx_init(rxo_vpx* enc, rxo_info* info) {
   }
 
   printf("w: %d\n", info->width);
-  enc->cfg.rc_target_bitrate = 50;
+  enc->cfg.rc_target_bitrate = 300;
   enc->cfg.g_w = info->width;
   enc->cfg.g_h = info->height;
   enc->cfg.g_timebase.num = 1; 
