@@ -9,8 +9,8 @@ extern "C" {
 }
 
 #define DEVICE 0
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 160
+#define HEIGHT 90
 #define FPS 30
 
 using namespace ca; 
@@ -29,7 +29,7 @@ uint8_t* yuv = NULL;
 uint8_t* u   = NULL;
 uint8_t* v   = NULL;
 int cap_id   = 0;
-int cap_fmt  = CA_UYVY422;
+int cap_fmt  = CA_YUYV422;
 
 int main() {
 
@@ -50,11 +50,22 @@ int main() {
   info.quality = 50;
   info.port = 8000;
   info.host = "127.0.0.1";
-  //info.host = "192.168.0.30";
   info.user = "source";
   info.password = "hackme";
-  //  info.mount = "/example.ogg";
-  info.mount = "/example.webm";
+
+  info.mode = RXO_WEBM;
+  //info.mode = RXO_OGG;
+
+  if (info.mode == RXO_OGG) {
+    info.mount = "/example.ogg";
+  }
+  else if (info.mode == RXO_WEBM) {
+    info.mount = "/example.webm";
+  }
+  else {
+    printf("Error: invald rxo mode.\n");
+    exit(1);
+  }
 
   if (rxo_streamer_init(&streamer, &info) < 0) {
     printf("Error: cannot initialize the streamer.\n");
@@ -111,12 +122,14 @@ static int init_webcam(int device, int w, int h) {
     if (cap_fmt < 0) {
       return -7;
     }
-    
+
     cap_id = cap->findCapability(device, w, h, cap_fmt);
     if (cap_id < 0) {
       return -8;
     }
   }
+
+//cap->listCapabilities(device);
 
   /* open device */
   Settings set;
@@ -128,10 +141,18 @@ static int init_webcam(int device, int w, int h) {
     return -9;
   }
 
+#if defined(__APPLE__)
+  /* this is a bug in libvideocapture with C920, wrong yuv detected */
+  if (cap_fmt == CA_YUYV422) {
+    cap_fmt = CA_UYVY422;
+  }
+#endif
+
   if (cap->start() < 0) {
     return -10;
   }
 
+  
   return 0;
 }
 
@@ -145,6 +166,7 @@ static int shutdown_webcam() {
 
 /* get "the other" format */
 static int get_secondary_cap_fmt(int curr) {
+
   if (curr == CA_UYVY422) {
     return CA_YUYV422;
   }
@@ -192,6 +214,7 @@ static void on_webcam_frame(void* pixels, int nbytes, void* user) {
     printf("Error: unsupported pixel format from webcam.\n");
     exit(1);
   }
+
 }
 
 static void sighandler(int s) {
@@ -208,6 +231,5 @@ static int init_yuv() {
 
   u = yuv + WIDTH * HEIGHT;
   v = u + (WIDTH * HEIGHT) / 4;
-
   return 0;
 }

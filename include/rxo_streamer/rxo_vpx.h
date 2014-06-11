@@ -11,7 +11,6 @@
 extern "C" {
 #endif
 
-
 typedef struct rxo_vpx rxo_vpx;
 typedef void(*rxo_vpx_callback)(rxo_vpx* w, const vpx_codec_cx_pkt_t* pkt, int64_t pts);
 

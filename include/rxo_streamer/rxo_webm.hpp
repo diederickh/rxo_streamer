@@ -1,7 +1,6 @@
 #ifndef RXO_WEBM_H
 #define RXO_WEBM_H
 
-
 #include <rxo_streamer/rxo_types.h>
 #include <rxo_streamer/rxo_vpx.h>
 #include <stdint.h>

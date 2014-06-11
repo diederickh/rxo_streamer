@@ -4,12 +4,6 @@
 #include <rxo_streamer/rxo_webm.hpp>
 #include <webmtools/webm_live_muxer.h>
 
-#define WRITE_FILE 1
-
-#if WRITE_FILE
-static FILE* fp = NULL;
-#endif
-
 using namespace webm_tools;
 
 /* ----------------------------------------------- */
@@ -57,19 +51,8 @@ int rxo_webm_init(rxo_webm* w, rxo_info* info) {
     return -6;
   }
 
-  printf("Video track: %d\n", w->tracknum);
-
-#if WRITE_FILE
-  fp = fopen("out.webm", "wb");
-  if (!fp) {
-    printf("Error: cannot open webm output test file.\n");
-    exit(1);
-  }
-#endif  
-
   return 0;
 }
-
 
 int rxo_webm_encode(rxo_webm* w, uint8_t* data, uint32_t nbytes) {
 
@@ -100,18 +83,20 @@ void on_packet(rxo_vpx* vpx, const vpx_codec_cx_pkt_t* pkt, int64_t pts) {
 
   r = muxer->WriteVideoFrame((uint8_t*)pkt->data.frame.buf, 
                              (size_t)pkt->data.frame.sz, 
-                             pkt->data.frame.pts,
+                             pts,
+                             //pkt->data.frame.pts,
                              (bool)is_key);
 
   if (r != WebMLiveMuxer::kSuccess) {
-    printf("Error: cannot write video frame to webm muxer.\n");
+    printf("Error: cannot write video frame to webm muxer: %d\n", r);
+    exit(1);
     return;
   }
 
   webm->chunk_size = 0;
   
   r = muxer->Finalize();
-  if (muxer->ChunkReady(&webm->chunk_size)) {
+  while (muxer->ChunkReady(&webm->chunk_size)) {
 
     if (webm->chunk_size > RXO_WEBM_BUFFER_SIZE) {
       printf("Error: chunk size to big. We need a bigger buffer.\n");
@@ -126,14 +111,6 @@ void on_packet(rxo_vpx* vpx, const vpx_codec_cx_pkt_t* pkt, int64_t pts) {
 
     if (webm->on_chunk) {
       webm->on_chunk(webm, webm->chunk_buffer, webm->chunk_size); 
-
-#if WRITE_FILE
-      fwrite((void*)webm->chunk_buffer, webm->chunk_size, 1, fp);
-#endif
-      
     }
-    //  printf("CHUNK: %u\n", webm->chunk_size);
   }
-  //rxo_webm_add_packet(webm, pkt->data.frame.buf, pkt->data.frame.sz, pts);
-  printf("Got packet: %d, %lld, %lld, r: %d, KEY: %d\n", is_key, pts, pkt->data.frame.pts, r, is_key);
 }

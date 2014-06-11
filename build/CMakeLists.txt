@@ -57,6 +57,10 @@ if(APPLE)
      ${extern_lib_dir}/libtheoraenc.a
      ${extern_lib_dir}/libogg.a
      ${extern_lib_dir}/libspeex.a
+     ${extern_lib_dir}/libvpx.a
+     ${extern_lib_dir}/libwebm.a
+     ${extern_lib_dir}/libwebmtools.a
+     ${extern_lib_dir}/libuv.a
      ${fr_corefoundation}  # uv
      ${fr_cocoa}           # uv
      ${fr_iokit}           # uv

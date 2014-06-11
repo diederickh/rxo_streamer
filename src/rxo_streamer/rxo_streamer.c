@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <uv.h>
 #include <rxo_streamer/rxo_streamer.h>
 
 /* ----------------------------------------------- */
@@ -62,8 +63,7 @@ int rxo_streamer_init(rxo_streamer* rxo, rxo_info* info) {
     return -8;
   }
     
-  //r = shout_set_format(rxo->shout, SHOUT_FORMAT_OGG);
-  r = shout_set_format(rxo->shout, SHOUT_FORMAT_WEBM);
+  r = shout_set_format(rxo->shout, (info->mode == RXO_WEBM) ? SHOUT_FORMAT_WEBM : SHOUT_FORMAT_OGG);
   if (r != SHOUTERR_SUCCESS) {
     printf("Error: setting shout format: %s\n", shout_get_error(rxo->shout));
     return -10;
@@ -75,24 +75,35 @@ int rxo_streamer_init(rxo_streamer* rxo, rxo_info* info) {
     return -11;
   }
 
-  /* set callbacks */
-  rxo->theora.user = rxo;
-  rxo->theora.on_data = on_theora_data;
-  rxo->webm.user = rxo;
-  rxo->webm.on_chunk = on_webm_data;
+  rxo->mode = info->mode;
+  rxo->bytes_sent = 0;
+  rxo->time_started = uv_hrtime();
 
-  /* init theora encoder */
-  if (rxo_theora_init(&rxo->theora, info) < 0) {
-    printf("Error: cannot init theora.\n");
-    return -2;
+  /* init correct encoder */
+  if (info->mode == RXO_OGG) { 
+
+    /* init theora encoder */
+    rxo->theora.user = rxo;
+    rxo->theora.on_data = on_theora_data;
+
+    if (rxo_theora_init(&rxo->theora, info) < 0) {
+      printf("Error: cannot init theora.\n");
+      return -2;
+    }
+  }
+  else if(info->mode == RXO_WEBM) {
+
+    /* init webm */
+    rxo->webm.user = rxo;
+    rxo->webm.on_chunk = on_webm_data;
+
+    if (rxo_webm_init(&rxo->webm, info) < 0) {
+      printf("Error: cannot init webm.\n");
+      return -3;
+    }
   }
 
-
-  if (rxo_webm_init(&rxo->webm, info) < 0) {
-    printf("Error: cannot init webm.\n");
-    return -3;
-  }
-
+  
   return 0;
 }
 
@@ -104,16 +115,19 @@ int rxo_streamer_add_frame(rxo_streamer* rxo, uint8_t* pixels, uint32_t nbytes) 
   if (!nbytes) { return -3; } 
 #endif
 
-  //  printf("Add frame: %u\n", nbytes);
-  /*
-  if (rxo_theora_add_frame(&rxo->theora, pixels, nbytes) < 0) {
-    printf("Error: cannot add theora frame.\n");
+  if (rxo->mode == RXO_OGG) { 
+    if (rxo_theora_add_frame(&rxo->theora, pixels, nbytes) < 0) {
+      printf("Error: cannot add theora frame.\n");
+      return -4;
+    };
+  }
+  else if (rxo->mode == RXO_WEBM) {
+    rxo_webm_encode(&rxo->webm, pixels, nbytes);
+  }
+  else {
+    printf("(Error: invalid rxo mode.\n");
     return -4;
-  };
-  */
-  /* BEGIN TMP */
-  rxo_webm_encode(&rxo->webm, pixels, nbytes);
-  /* END TMP */
+  }
 
   return 0;
 }
@@ -124,6 +138,7 @@ static void on_theora_data(rxo_theora* th, uint8_t* data, uint32_t nbytes) {
 
   int r;
   rxo_streamer* rxo = NULL;
+  double runtime = 0;
 
 #if !defined(NDEBUG)
   if (!th)     { printf("Error: invalid theora.\n");   exit(1); } 
@@ -133,32 +148,34 @@ static void on_theora_data(rxo_theora* th, uint8_t* data, uint32_t nbytes) {
 
   rxo = (rxo_streamer*)th->user;
 
-#if 1
-  /*
   r = shout_send(rxo->shout, data, nbytes);
   if (r != SHOUTERR_SUCCESS) {
     printf("Error: sending shout: %s\n", shout_get_error(rxo->shout));
   }
-  */
-  //  shout_sync(rxo->shout);
 
-#else 
-  // printf("Go data: %u\n", nbytes);
-  rxo->on_data(rxo, data, nbytes);
-#endif
+  rxo->bytes_sent += nbytes;
+
+  runtime = (uv_hrtime() - rxo->time_started);
+  runtime = runtime / (1000.0 * 1000.0 * 1000.0);
+  printf("duration: %2.2f, avarage per sec: %2.2f kB, total sent: %llu kB\n", runtime, (rxo->bytes_sent / runtime) / 1024.0, rxo->bytes_sent / 1024) ;
 }
 
 
 static void on_webm_data(rxo_webm* webm, uint8_t* data, uint32_t nbytes) {
   int r;
   rxo_streamer* rxo = NULL;
+  double runtime = 0;
 
   rxo = (rxo_streamer*)webm->user;
 
-  printf("Got webmchunk: %d\n", nbytes);
-  
   r = shout_send(rxo->shout, data, nbytes);
   if (r != SHOUTERR_SUCCESS) {
     printf("Error: sending shout: %s\n", shout_get_error(rxo->shout));
   }
+
+  rxo->bytes_sent += nbytes;
+
+  runtime = (uv_hrtime() - rxo->time_started);
+  runtime = runtime / (1000.0 * 1000.0 * 1000.0);
+  printf("duration: %2.2f, avarage per sec: %2.2f kB, total sent: %llu kB\n", runtime, (rxo->bytes_sent / runtime) / 1024.0, rxo->bytes_sent / 1024) ;
 }

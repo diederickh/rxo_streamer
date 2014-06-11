@@ -22,8 +22,6 @@ static void on_data(rxo_streamer* rxo, uint8_t* data, uint32_t nbytes);
 
 
 int main() {
-  //  printf("\n\ntest_ogg\n\n");
-
   signal(SIGINT, sighandler);
 
   fp = fopen("out.ogv", "wb");
@@ -56,13 +54,11 @@ int main() {
   }
 
   while (1) {
-    //  printf("....\n");
     rxo_generator_update(&gen);
     rxo_streamer_add_frame(&rxo, gen.y, gen.nbytes);
     usleep(10000);
   }
 
-//printf("\n");
   return 0;
 }
 
@@ -73,8 +69,6 @@ void sighandler(int s) {
 }
 
 static void on_data(rxo_streamer* rxo, uint8_t* data, uint32_t nbytes) {
-  //printf(">> WRITE: %u\n", nbytes);
-  //fwrite((void*)data, nbytes, 1, fp);
   fwrite((void*)data, nbytes, 1, stdout);
   fflush(stdout);
 }

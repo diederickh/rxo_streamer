@@ -1,12 +1,6 @@
 #include <stdio.h>
 #include <rxo_streamer/rxo_vpx.h>
 
-/* ----------------------------------------------- */
-
-//static void on_webm_chunk(rxo_webm* webm, uint8_t* buffer, uint32_t nbytes);
-
-/* ----------------------------------------------- */
-
 int rxo_vpx_init(rxo_vpx* enc, rxo_info* info) {
 
   vpx_codec_err_t err;
@@ -22,11 +16,11 @@ int rxo_vpx_init(rxo_vpx* enc, rxo_info* info) {
   }
 
   printf("w: %d\n", info->width);
-  enc->cfg.rc_target_bitrate = 1000;
+  enc->cfg.rc_target_bitrate = 50;
   enc->cfg.g_w = info->width;
   enc->cfg.g_h = info->height;
-  enc->cfg.g_timebase.num = 1; // info->fps_numerator;
-  enc->cfg.g_timebase.den = 1000; // (int)info->fps_denominator;
+  enc->cfg.g_timebase.num = 1; 
+  enc->cfg.g_timebase.den = 1000;
   enc->cfg.g_pass = VPX_RC_ONE_PASS;
   enc->cfg.g_error_resilient = 1;
   enc->cfg.kf_mode = VPX_KF_AUTO;
@@ -46,7 +40,6 @@ int rxo_vpx_init(rxo_vpx* enc, rxo_info* info) {
   enc->frame_duration = ((double) 1.0 / info->fps_denominator) / ((double) enc->cfg.g_timebase.num / enc->cfg.g_timebase.den);
   enc->num_frames = 0;
 
-  printf("FRAME DUR: %lu\n", enc->frame_duration);
   return 0;
 }
 
@@ -79,7 +72,6 @@ int rxo_vpx_encode(rxo_vpx* w, unsigned char* pixels, uint32_t nbytes, int64_t p
     return -4;
   }
   
-
   while ( (pkt = vpx_codec_get_cx_data(&w->ctx, &iter)) ) {
     if (pkt->kind == VPX_CODEC_CX_FRAME_PKT) {
       w->on_packet(w, pkt, pts);
@@ -91,8 +83,3 @@ int rxo_vpx_encode(rxo_vpx* w, unsigned char* pixels, uint32_t nbytes, int64_t p
 
   return 0;
 }
-
-/* ----------------------------------------------- */
-
-//static void on_webm_chunk(rxo_webm* webm, uint8_t* buffer, uint32_t nbytes) {
-//}

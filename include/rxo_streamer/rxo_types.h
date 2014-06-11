@@ -1,6 +1,9 @@
 #ifndef RXO_TYPES_H
 #define RXO_TYPES_H
 
+#define RXO_WEBM 0
+#define RXO_OGG 1
+
 typedef struct rxo_info rxo_info;
 
 struct rxo_info {                     /* settings for the streamer + encoder */
@@ -11,6 +14,7 @@ struct rxo_info {                     /* settings for the streamer + encoder */
   int fps_numerator;                  /* fps */
   int fps_denominator;                /* fps */
   int quality;                        /* encoding quality */
+  int mode;                           /* what mode: RXO_WEBM or RXO_OGG */
 
   /* shout */
   int port;                           /* icecast server port */
