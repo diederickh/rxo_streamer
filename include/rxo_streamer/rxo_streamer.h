@@ -24,5 +24,6 @@ struct rxo_streamer {
 
 int rxo_streamer_init(rxo_streamer* rxo, rxo_info* info);
 int rxo_streamer_add_frame(rxo_streamer* rxo, uint8_t* pixels, uint32_t nbytes);
+int rxo_streamer_add_planes(rxo_streamer* rxo, uint8_t* y, int ystride, uint8_t* u, int ustride, uint8_t* v, int vstride);
 
 #endif

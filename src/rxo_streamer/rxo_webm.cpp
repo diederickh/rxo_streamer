@@ -56,13 +56,26 @@ int rxo_webm_init(rxo_webm* w, rxo_info* info) {
 
 int rxo_webm_encode(rxo_webm* w, uint8_t* data, uint32_t nbytes) {
 
+#if !defined(NDEBUG)
   if (!w) { return -1; }
   if (!data) { return -2; } 
   if (!nbytes) { return -3; } 
+#endif
   
   uint64_t time_ns = uv_hrtime() - w->time_started;
 
   return rxo_vpx_encode(&w->vpx, data, nbytes, time_ns);
+}
+
+int rxo_webm_encode_planes(rxo_webm* w
+                           ,uint8_t* y, int ystride
+                           ,uint8_t* u, int ustride
+                           ,uint8_t* v, int vstride)
+{
+
+
+  uint64_t time_ns = uv_hrtime() - w->time_started;
+  return rxo_vpx_encode_planes(&w->vpx, y, ystride, u, ustride, v, vstride, time_ns);
 }
 
 /* ----------------------------------------------- */

@@ -4,6 +4,11 @@ if [ ! -d build.release ] ; then
     mkdir build.release
 fi
 
+if [ ! -d ../extern/tinylib ] ; then 
+    cd ../extern
+    git clone git@github.com:roxlu/tinylib.git
+fi 
+
 cd build.release
 cmake -DCMAKE_BUILD_TYPE=Release ../ 
 cmake --build . --target install
@@ -15,5 +20,6 @@ else
 fi
 
 #./test_ogg
-./test_webcam
+#./test_webcam
 #./test_webm
+./test_glfw

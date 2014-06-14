@@ -37,5 +37,6 @@ struct rxo_theora {
 
 int rxo_theora_init(rxo_theora* th, rxo_info* info);
 int rxo_theora_add_frame(rxo_theora* th, uint8_t* data, uint32_t nbytes);
+int rxo_theora_add_planes(rxo_theora* th, uint8_t* y, int ystride, uint8_t* u, int ustride, uint8_t* v, int vstride);
 
 #endif

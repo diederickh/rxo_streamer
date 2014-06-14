@@ -30,6 +30,7 @@ struct rxo_vpx {
 
 int rxo_vpx_init(rxo_vpx* w, rxo_info* info);
 int rxo_vpx_encode(rxo_vpx* w, unsigned char* pixels, uint32_t nbytes, int64_t pts);
+int rxo_vpx_encode_planes(rxo_vpx* w, uint8_t* y, int ystride, uint8_t* u, int ustride, uint8_t* v, int vstride, int64_t pts);
 
 #if defined(__cplusplus)
 };

@@ -8,9 +8,17 @@ extern "C" {
 #  include <libyuv.h>
 }
 
+#define USE_THEORA 0
 #define DEVICE 0
-#define WIDTH 160
-#define HEIGHT 120
+#if USE_THEORA
+//#  define WIDTH 160
+//#  define HEIGHT 120
+#  define WIDTH 320
+#  define HEIGHT 240
+#else
+#  define WIDTH 320
+#  define HEIGHT 240
+#endif
 #define FPS 15
 
 using namespace ca; 
@@ -47,14 +55,17 @@ int main() {
   info.height = HEIGHT;
   info.fps_numerator = FPS;
   info.fps_denominator = 1;
-  info.quality = 50;
+  info.quality = 75;
   info.port = 8000;
   info.host = "127.0.0.1";
   info.user = "source";
   info.password = "hackme";
 
+#if !USE_THEORA  
   info.mode = RXO_WEBM;
-  //info.mode = RXO_OGG;
+#else
+  info.mode = RXO_OGG;
+#endif
 
   if (info.mode == RXO_OGG) {
     info.mount = "/example.ogg";

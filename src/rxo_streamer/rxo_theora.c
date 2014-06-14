@@ -15,9 +15,8 @@ int rxo_theora_init(rxo_theora* th, rxo_info* info) {
   /* setup info */
   w = info->width;
   h = info->height;
-  th->info.frame_width = w;
-  th->info.frame_height = h;
-
+  th->info.frame_width = ( (w + 15) >> 4) << 4;    /* must be multiple of 16 */
+  th->info.frame_height = ( (h + 15) >> 4) << 4;   /* must be multiple of 16 */
   th->info.pic_width = w;
   th->info.pic_height = h;
   th->info.pic_x = 0;
@@ -128,4 +127,34 @@ int rxo_theora_add_frame(rxo_theora* th, uint8_t* data, uint32_t nbytes) {
   return 0;
 }
 
+int rxo_theora_add_planes(rxo_theora* th
+                          ,uint8_t* y, int ystride 
+                          ,uint8_t* u, int ustride 
+                          ,uint8_t* v, int vstride)
+{
+  int r = 0;
 
+ /* set pointers */
+  th->yuv[0].data = y;
+  th->yuv[1].data = u;
+  th->yuv[2].data = v;
+  th->yuv[0].stride  = ystride;
+  th->yuv[1].stride  = ustride;
+  th->yuv[2].stride  = vstride;
+
+  /* encode the yuv */
+  r = th_encode_ycbcr_in(th->ctx, th->yuv);
+  if (r != 0) {
+    printf("Error: cannot encode frame.\n");
+    return -4;
+  }
+
+  while (th_encode_packetout(th->ctx, 0, &th->opacket) != 0) {
+    ogg_stream_packetin(&th->ostream, &th->opacket);
+    while(ogg_stream_pageout(&th->ostream, &th->opage)) {
+      th->on_data(th, th->opage.header, th->opage.header_len);
+      th->on_data(th, th->opage.body, th->opage.body_len);
+    }
+  }
+  return 0;
+}

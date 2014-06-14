@@ -28,3 +28,9 @@
   rxo_webm
   --------      
   -  Directly use mkvmuxer or libebm instead of webmtools, see https://github.com/garrynewman/holly/tree/master/holly/modules/webm
+
+
+  rxo_gl
+  ------ 
+
+  - free all gl objects in rxo_gl_clear()

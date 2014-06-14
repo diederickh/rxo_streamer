@@ -132,6 +132,29 @@ int rxo_streamer_add_frame(rxo_streamer* rxo, uint8_t* pixels, uint32_t nbytes) 
   return 0;
 }
 
+int rxo_streamer_add_planes(rxo_streamer* rxo 
+                            ,uint8_t* y, int ystride 
+                            ,uint8_t* u, int ustride
+                            ,uint8_t* v, int vstride)
+{
+  if (rxo->mode == RXO_OGG) { 
+    if (rxo_theora_add_planes(&rxo->theora, y, ystride, u, ustride, v, vstride) < 0) {
+      printf("Error: cannot add theora frame.\n");
+      return -4;
+    };
+  }
+  else if (rxo->mode == RXO_WEBM) {
+    if (rxo_webm_encode_planes(&rxo->webm, y, ystride, u, ustride, v, vstride) < 0) {
+      printf("Error: cannot encode vpx plane.\n");
+    }
+  }
+  else {
+    printf("(Error: invalid rxo mode.\n");
+    return -4;
+  }
+}
+
+
 /* ----------------------------------------------- */
 
 static void on_theora_data(rxo_theora* th, uint8_t* data, uint32_t nbytes) {

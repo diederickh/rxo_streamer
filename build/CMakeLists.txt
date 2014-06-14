@@ -16,6 +16,7 @@ include_directories(
   ${CMAKE_CURRENT_LIST_DIR}/../include
   ${extern_include_dir}
   ${CMAKE_CURRENT_LIST_DIR}/../extern/tinylib/src
+  ${CMAKE_CURRENT_LIST_DIR}/../src/examples/
 )
 
 set(rxo_streamer_sources
@@ -48,6 +49,7 @@ if(APPLE)
    find_library(fr_audio_toolbox AudioToolbox)
  
    set(app_libs
+     ${extern_lib_dir}/libglfw3.a
      ${extern_lib_dir}/libz.a
      ${extern_lib_dir}/libvideocapture.a
      ${extern_lib_dir}/libyuv.a
@@ -80,6 +82,7 @@ elseif(UNIX)
   endif()
 
   set(app_libs
+    ${extern_lib_dir}/libglfw3.a
     ${extern_lib_dir}/libuv.a
     ${extern_lib_dir}/libyuv.a  # for webcam conversion
 #    ${extern_lib_dir}/libpng.a
@@ -113,24 +116,29 @@ add_library(rxo_streamer ${rxo_streamer_sources})
 install(TARGETS rxo_streamer ARCHIVE DESTINATION lib)
 
 # test ogg streamer
-add_executable(test_ogg ${sd}/examples/test_ogg.cpp ${app_sources})
-target_link_libraries(test_ogg rxo_streamer ${app_libs})
-install(TARGETS test_ogg DESTINATION bin)
+# add_executable(test_ogg ${sd}/examples/test_ogg.cpp ${app_sources})
+# target_link_libraries(test_ogg rxo_streamer ${app_libs})
+# install(TARGETS test_ogg DESTINATION bin)
 
 # test shout sender
-add_executable(test_shout ${sd}/examples/test_shout.cpp ${app_sources})
-target_link_libraries(test_shout rxo_streamer ${app_libs})
-install(TARGETS test_shout DESTINATION bin)
+# add_executable(test_shout ${sd}/examples/test_shout.cpp ${app_sources})
+# target_link_libraries(test_shout rxo_streamer ${app_libs})
+# install(TARGETS test_shout DESTINATION bin)
 
 # test webcam sender
-add_executable(test_webcam ${sd}/examples/test_webcam.cpp ${app_sources})
-target_link_libraries(test_webcam rxo_streamer ${app_libs})
-install(TARGETS test_webcam DESTINATION bin)
+ add_executable(test_webcam ${sd}/examples/test_webcam.cpp ${app_sources})
+ target_link_libraries(test_webcam rxo_streamer ${app_libs})
+ install(TARGETS test_webcam DESTINATION bin)
 
 # test webm muxer
-add_executable(test_webm ${sd}/examples/test_webm.cpp ${app_sources})
-target_link_libraries(test_webm rxo_streamer ${app_libs})
-install(TARGETS test_webm DESTINATION bin)
+# add_executable(test_webm ${sd}/examples/test_webm.cpp ${app_sources})
+# target_link_libraries(test_webm rxo_streamer ${app_libs})
+# install(TARGETS test_webm DESTINATION bin)
+
+# test glfw 
+add_executable(test_glfw ${sd}/examples/test_glfw.cpp ${app_sources})
+target_link_libraries(test_glfw rxo_streamer ${app_libs})
+install(TARGETS test_glfw DESTINATION bin)
 
 
 
