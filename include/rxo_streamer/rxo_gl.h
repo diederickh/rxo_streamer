@@ -169,7 +169,6 @@ int rxo_gl_download(rxo_gl* gl);
 static GLuint gl_create_shader(GLenum shader, const char* ptr);
 static GLuint gl_create_program(GLuint vert, GLuint frag);
 static GLuint gl_create_texture(GLenum internalFormat, GLenum format, int w, int h);
-static int convert_input_to_yuv(); /* converts the input scene into YUV420P */
 
 /* -------------------------------------------------------------------------- */
 
@@ -413,10 +412,6 @@ int rxo_gl_download(rxo_gl* gl) {
 }
 
 /* -------------------------------------------------------------------------- */
-
-static int convert_input_to_yuv(rxo_gl* gl) {
-  return 0;
-}
 
 static GLuint gl_create_program(GLuint vert, GLuint frag) {
   GLuint prog = glCreateProgram();
